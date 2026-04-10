@@ -3,75 +3,151 @@
 <head>
   <title>FoodWise AI</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
     body {
       font-family: Arial;
       background: #0a0f0d;
       color: white;
-      padding: 20px;
+      margin: 0;
     }
+
+    .header {
+      background: #111814;
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .tabs button {
+      margin: 5px;
+      padding: 8px 12px;
+      background: #4ade80;
+      border: none;
+      border-radius: 6px;
+    }
+
     .card {
       background: #161e1a;
       padding: 20px;
+      margin: 20px;
       border-radius: 10px;
-      margin-top: 20px;
     }
-    input {
+
+    input, select {
       width: 100%;
       padding: 10px;
       margin-top: 10px;
       border-radius: 8px;
       border: none;
     }
-    button {
+
+    button.main {
       margin-top: 15px;
       padding: 10px;
+      width: 100%;
       background: #4ade80;
       border: none;
       border-radius: 8px;
       font-weight: bold;
-      width: 100%;
+    }
+
+    .tabcontent {
+      display: none;
     }
   </style>
 </head>
 
 <body>
 
-<h2>🌿 FoodWise AI</h2>
-
-<div class="card">
-  <h3>🍽️ Food Waste Prediction</h3>
-
-  <input id="food" placeholder="Food (kg)">
-  <input id="people" placeholder="Number of People">
-
-  <button onclick="calculate()">Predict Waste</button>
-
-  <h2 id="result"></h2>
+<div class="header">
+  <h3>🌿 FoodWise AI</h3>
+  <div class="tabs">
+    <button onclick="showTab('predict')">Predict</button>
+    <button onclick="showTab('nutrition')">Nutrition</button>
+    <button onclick="showTab('diet')">Diet</button>
+    <button onclick="showTab('dashboard')">Dashboard</button>
+    <button onclick="showTab('donate')">Donate</button>
+  </div>
 </div>
 
-<div class="card">
-  <h3>🧬 Nutrition Analyzer</h3>
-
-  <input id="foodname" placeholder="Enter food name">
-  <button onclick="nutrition()">Analyze</button>
-
-  <p id="nutri"></p>
+<!-- PREDICT -->
+<div id="predict" class="tabcontent">
+  <div class="card">
+    <h3>🍽️ Food Waste Prediction</h3>
+    <input id="food" placeholder="Food (kg)">
+    <input id="people" placeholder="Number of People">
+    <button class="main" onclick="calculate()">Predict</button>
+    <h2 id="result"></h2>
+  </div>
 </div>
 
-<div class="card">
-  <h3>🥗 Diet Plan</h3>
+<!-- NUTRITION -->
+<div id="nutrition" class="tabcontent">
+  <div class="card">
+    <h3>🧬 Nutrition Analyzer</h3>
+    <input id="foodname" placeholder="Enter food name">
+    <button class="main" onclick="nutrition()">Analyze</button>
+    <p id="nutri"></p>
+  </div>
+</div>
 
-  <p>Monday: Oats + Fruits</p>
-  <p>Tuesday: Rice + Dal</p>
-  <p>Wednesday: Chapati + Vegetables</p>
-  <p>Thursday: Salad + Soup</p>
-  <p>Friday: Brown Rice + Chicken</p>
-  <p>Saturday: Fruits + Nuts</p>
-  <p>Sunday: Cheat Day 🍕</p>
+<!-- DIET (UPDATED SMART) -->
+<div id="diet" class="tabcontent">
+  <div class="card">
+    <h3>🥗 Smart Diet Plan</h3>
+
+    <input id="age" placeholder="Enter Age">
+    <input id="weight" placeholder="Enter Weight (kg)">
+
+    <select id="gender">
+      <option value="male">Male</option>
+      <option value="female">Female</option>
+    </select>
+
+    <button class="main" onclick="generateDiet()">Get Diet Plan</button>
+
+    <div id="dietResult" style="margin-top:20px;"></div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="tabcontent">
+  <div class="card">
+    <h3>📊 Dashboard</h3>
+    <p>Total Food: <span id="totalFood">0</span> kg</p>
+    <p>Total Waste: <span id="totalWaste">0</span> kg</p>
+  </div>
+</div>
+
+<!-- DONATE -->
+<div id="donate" class="tabcontent">
+  <div class="card">
+    <h3>🤝 NGOs</h3>
+    <p>Robin Hood Army</p>
+    <p>Feeding India</p>
+    <p>Roti Bank</p>
+    <p>No Waste Kitchen</p>
+  </div>
 </div>
 
 <script>
+let totalFood = 0;
+let totalWaste = 0;
+
+function showTab(tab) {
+  let tabs = document.getElementsByClassName("tabcontent");
+  for (let i = 0; i < tabs.length; i++) {
+    tabs[i].style.display = "none";
+  }
+  document.getElementById(tab).style.display = "block";
+}
+
+// default tab
+showTab('predict');
+
+// 🔮 Waste prediction
 function calculate() {
   let food = parseFloat(document.getElementById("food").value);
   let people = parseInt(document.getElementById("people").value);
@@ -85,12 +161,54 @@ function calculate() {
     0.08 * food + 0.002 * people + (ratio > 0.3 ? 0.15 * (ratio - 0.3) : 0)
   );
 
-  document.getElementById("result").innerText = "Waste: " + waste.toFixed(2) + " kg";
+  document.getElementById("result").innerText =
+    "Waste: " + waste.toFixed(2) + " kg";
+
+  totalFood += food;
+  totalWaste += waste;
+
+  document.getElementById("totalFood").innerText = totalFood.toFixed(2);
+  document.getElementById("totalWaste").innerText = totalWaste.toFixed(2);
 }
 
+// 🧬 Nutrition
 function nutrition() {
   document.getElementById("nutri").innerText =
     "Calories: 420 | Protein: 18g | Fat: 10g | Digestion: 3-5 hrs";
+}
+
+// 🥗 Smart Diet Logic
+function generateDiet() {
+  let age = parseInt(document.getElementById("age").value);
+  let weight = parseFloat(document.getElementById("weight").value);
+
+  if (!age || !weight) return;
+
+  let result = "";
+
+  if (weight < 50) {
+    result = `
+    🟡 Underweight<br>
+    🍳 Eggs, 🥛 Milk, 🍌 Banana, 🍚 Rice<br>
+    💪 Gain weight diet + light exercise
+    `;
+  } 
+  else if (weight >= 50 && weight <= 75) {
+    result = `
+    🟢 Normal Weight<br>
+    🥗 Balanced diet, 🍗 Protein, 🍎 Fruits<br>
+    🏃 Maintain fitness
+    `;
+  } 
+  else {
+    result = `
+    🔴 Overweight<br>
+    🥗 Salad, 🥒 Vegetables, 🍵 Green tea<br>
+    🚶 Reduce calories + cardio
+    `;
+  }
+
+  document.getElementById("dietResult").innerHTML = result;
 }
 </script>
 
