@@ -93,7 +93,7 @@
   </div>
 </div>
 
-<!-- DIET (UPDATED SMART) -->
+<!-- DIET -->
 <div id="diet" class="tabcontent">
   <div class="card">
     <h3>🥗 Smart Diet Plan</h3>
@@ -133,9 +133,11 @@
 </div>
 
 <script>
+
 let totalFood = 0;
 let totalWaste = 0;
 
+// TAB SWITCH
 function showTab(tab) {
   let tabs = document.getElementsByClassName("tabcontent");
   for (let i = 0; i < tabs.length; i++) {
@@ -147,7 +149,7 @@ function showTab(tab) {
 // default tab
 showTab('predict');
 
-// 🔮 Waste prediction
+// 🔮 WASTE PREDICTION
 function calculate() {
   let food = parseFloat(document.getElementById("food").value);
   let people = parseInt(document.getElementById("people").value);
@@ -171,13 +173,13 @@ function calculate() {
   document.getElementById("totalWaste").innerText = totalWaste.toFixed(2);
 }
 
-// 🧬 Nutrition
+// 🧬 NUTRITION
 function nutrition() {
   document.getElementById("nutri").innerText =
     "Calories: 420 | Protein: 18g | Fat: 10g | Digestion: 3-5 hrs";
 }
 
-// 🥗 Smart Diet Logic
+// 🥗 SMART DIET (INPUT BASED)
 function generateDiet() {
   let age = parseInt(document.getElementById("age").value);
   let weight = parseFloat(document.getElementById("weight").value);
@@ -189,27 +191,31 @@ function generateDiet() {
   if (weight < 50) {
     result = `
     🟡 Underweight<br>
+    👉 High calorie diet<br>
     🍳 Eggs, 🥛 Milk, 🍌 Banana, 🍚 Rice<br>
-    💪 Gain weight diet + light exercise
+    🏋️ Light strength training
     `;
   } 
   else if (weight >= 50 && weight <= 75) {
     result = `
     🟢 Normal Weight<br>
-    🥗 Balanced diet, 🍗 Protein, 🍎 Fruits<br>
-    🏃 Maintain fitness
+    👉 Balanced diet<br>
+    🥗 Vegetables, 🍗 Chicken, 🍎 Fruits<br>
+    🏃 Regular exercise
     `;
   } 
   else {
     result = `
     🔴 Overweight<br>
+    👉 Low calorie diet<br>
     🥗 Salad, 🥒 Vegetables, 🍵 Green tea<br>
-    🚶 Reduce calories + cardio
+    🚶 Walking + cardio
     `;
   }
 
   document.getElementById("dietResult").innerHTML = result;
 }
+
 </script>
 
 </body>
